@@ -1,0 +1,79 @@
+#include <iostream>
+#include <stack>
+#include <cctype> 
+
+using namespace std;
+
+struct Node {
+    char value;
+    Node* left;
+    Node* right;
+    Node(char val) {
+        value = val;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+Node* buildExpressionTree(string postfix) {
+    stack<Node*> st;
+    for (char ch : postfix) {
+        if (isalnum(ch)) {
+            st.push(new Node(ch));
+        } else {
+            Node* right = st.top(); st.pop();
+            Node* left = st.top(); st.pop();
+            Node* node = new Node(ch);
+            node->left = left;
+            node->right = right;
+            st.push(node);
+        }
+    }
+    return st.top();
+}
+
+void inorderTraversal(Node* root) {
+    if (root) {
+        if (root->left || root->right) cout << "(";
+        inorderTraversal(root->left);
+        cout << root->value;
+        inorderTraversal(root->right);
+        if (root->left || root->right) cout << ")";
+    }
+}
+
+void preorderTraversal(Node* root) {
+    if (root) {
+        cout << root->value << " ";
+        preorderTraversal(root->left);
+        preorderTraversal(root->right);
+    }
+}
+
+void postorderTraversal(Node* root) {
+    if (root) {
+        postorderTraversal(root->left);
+        postorderTraversal(root->right);
+        cout << root->value << " ";
+    }
+}
+
+int main() {
+    string postfix = "ab+cde+**";
+    Node* expressionTree = buildExpressionTree(postfix);
+
+    cout << "Duyệt theo Trung tố (Infix): ";
+    inorderTraversal(expressionTree);
+    cout << endl;
+
+    cout << "Duyệt theo Tiền tố (Prefix): ";
+    preorderTraversal(expressionTree);
+    cout << endl;
+
+    cout << "Duyệt theo Hậu tố (Postfix): ";
+    postorderTraversal(expressionTree);
+    cout << endl;
+
+    return 0;
+}
+
